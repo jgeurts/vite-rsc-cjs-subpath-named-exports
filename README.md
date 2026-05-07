@@ -23,12 +23,28 @@ react / react-dom:      19.2.6
 
 ## Reproduce
 
+Locally:
+
 ```sh
 npm install
 rm -rf node_modules/.vite   # ensure cold optimizer cache
 npm run dev
 # open http://localhost:5173/ in a browser
 ```
+
+Or on StackBlitz:
+[stackblitz.com/github/jgeurts/vite-rsc-cjs-subpath-named-exports](https://stackblitz.com/github/jgeurts/vite-rsc-cjs-subpath-named-exports).
+Watch the StackBlitz terminal for the smoking gun:
+
+```
+[vite] (client) ✨ new dependencies optimized: @liveblocks/react, @reduxjs/toolkit, react-redux
+[vite] (client) ✨ optimized dependencies changed. reloading
+```
+
+That second-pass optimization is exactly the lazy-discovery race
+that drifts `?v=` hashes. WebContainer's hard reload often masks the
+visual `Invalid hook call`, so locally is more reliable for
+observing the browser-side crash.
 
 Expected: page renders without console errors.
 
@@ -103,6 +119,11 @@ environments: {
 
 ## Fix
 
-Mirroring the SSR/RSC env's `optimizeDeps.include` for the client env
-removes the lazy-discovery race. See the proposed fix at
-<TODO: PR link>.
+Filed upstream:
+
+- Issue: [vitejs/vite-plugin-react#1213](https://github.com/vitejs/vite-plugin-react/issues/1213)
+- PR: [vitejs/vite-plugin-react#1214](https://github.com/vitejs/vite-plugin-react/pull/1214)
+
+The PR mirrors the SSR/RSC env's `optimizeDeps.include` for the client
+env and pre-includes the React-peer packages found by
+`crawlFrameworkPkgs`, removing the lazy-discovery race.
