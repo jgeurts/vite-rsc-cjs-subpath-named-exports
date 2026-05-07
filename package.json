@@ -20,8 +20,8 @@
   "devDependencies": {
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "latest",
-    "@vitejs/plugin-rsc": "latest",
+    "@vitejs/plugin-react": "^5.0.4",
+    "@vitejs/plugin-rsc": "0.5.26",
     "rsc-html-stream": "^0.0.7",
     "vite": "^8.0.10"
   }
