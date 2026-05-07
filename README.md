@@ -97,33 +97,26 @@ chunk.
 
 ## Workaround
 
-Add the React-peer packages to the `client` environment's
-`optimizeDeps.include` in your own `vite.config.ts`:
+Per [the plugin-rsc author's
+guidance](https://github.com/vitejs/vite-plugin-react/issues/1213#issuecomment-4395119948),
+this is the framework integration's responsibility. Set
+[`optimizeDeps.entries`](https://vite.dev/config/dep-optimization-options#optimizedeps-entries)
+on the client env in your own `vite.config.ts` so the optimizer scans
+your source up-front and discovers `'use client'` packages before the
+first browser request:
 
 ```ts
 environments: {
   client: {
     optimizeDeps: {
-      include: [
-        'react',
-        'react-dom',
-        'react/jsx-runtime',
-        'react/jsx-dev-runtime',
-        '@liveblocks/react',
-        'react-redux',
-      ],
+      entries: ['src/**/*.{ts,tsx}'],
     },
   },
 },
 ```
 
-## Fix
-
-Filed upstream:
+## Upstream
 
 - Issue: [vitejs/vite-plugin-react#1213](https://github.com/vitejs/vite-plugin-react/issues/1213)
-- PR: [vitejs/vite-plugin-react#1214](https://github.com/vitejs/vite-plugin-react/pull/1214)
-
-The PR mirrors the SSR/RSC env's `optimizeDeps.include` for the client
-env and pre-includes the React-peer packages found by
-`crawlFrameworkPkgs`, removing the lazy-discovery race.
+  (declined as a plugin-rsc-side fix; recorded for future framework
+  integrators).
